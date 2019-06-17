@@ -20,7 +20,7 @@ def rescale():
             if img is None:
                 print('Error opening image, skipping')
                 continue
-            img = cv2.resize(img, (160, 90))
+            img = cv2.resize(img, (112, 63))
             # src = cv2.GaussianBlur(src, (1, 1), 0)
             # src_gray = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
             # dstLaplacian = cv2.Laplacian(src_gray, ddepth, kernel_size)

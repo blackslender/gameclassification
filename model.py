@@ -2,6 +2,7 @@ import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Flatten, Conv2D, Activation, Add, MaxPooling2D, BatchNormalization, Dense, Input, ZeroPadding2D
 from keras.models import Model
+from keras.callbacks import EarlyStopping, CSVLogger, ModelCheckpoint
 
 path = ""
 training_data_dir = path + "training"  # 10 000 * 2
@@ -215,12 +216,28 @@ test_generator = test_data_generator.flow_from_directory(
     batch_size=1,
     shuffle=False)
 
+# serialize model to JSON
+model_json = model.to_json()
+with open("model.json", "w") as json_file:
+    json_file.write(model_json)
+# serialize weights to HDF5
+model.save_weights("model.h5")
+print("Saved model to disk")
+
+# define the checkpoint
+filepath = "model.h5"
+checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
+earlyStopping = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto', baseline=None, restore_best_weights=True)
+csvLogger = CSVLogger('log',append = False, separator = ';')
+callbacks_list = [checkpoint,earlyStopping,csvLogger]
+
 model.fit_generator(
     training_generator,
     steps_per_epoch=len(training_generator.filenames),
     epochs=EPOCHS,
     validation_data=validation_generator,
-    validation_steps=len(validation_generator.filenames))
+    validation_steps=len(validation_generator.filenames),
+    callbacks = callbacks_list)
 #  // BATCH_SIZE,
 # callbacks=[PlotLossesKeras(), CSVLogger(TRAINING_LOGS_FILE,
 #                                         append=False,

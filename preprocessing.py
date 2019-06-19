@@ -20,7 +20,7 @@ def rescale():
             if img is None:
                 print('Error opening image, skipping')
                 continue
-            img = cv2.resize(img, (112, 63))
+            img = cv2.resize(img, (160, 90))
             # src = cv2.GaussianBlur(src, (1, 1), 0)
             # src_gray = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
             # dstLaplacian = cv2.Laplacian(src_gray, ddepth, kernel_size)
@@ -49,12 +49,22 @@ def labelAndSplit():
         q = filename
         while q[-1] != '_':
             q = q[:-1]
-        q = q[5:-9]
+        q = q[5:-1]
         if q[-1] == ' ':
             q = q[:-1]
+        if (q == 'American Truck Simulator' or q == 'Euro Truck Simulator 2'):
+            q = 'Truck Simulator'
+        elif (q == 'Fallout 2'):
+            q = 'Fallout'
+        elif (q[:3] == 'NBA'):
+            q = 'NBA'
+        elif (q[:11] == 'The Witcher'):
+            q = 'The Witcher'
+
+            
         if not os.path.exists(os.path.abspath(imgType) + '\\' + q):
             os.mkdir(os.path.abspath(imgType) + '\\' + q)
-
+        
         newname = os.path.abspath(imgType + '\\' + q + '\\' + str(i) + '.jpg')
         label[newname] = q
 
@@ -68,7 +78,7 @@ def labelAndSplit():
 
 
 def main(argv):
-    rescale()
+    # rescale()
     labelAndSplit()
 
 
